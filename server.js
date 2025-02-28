@@ -17,7 +17,11 @@ app.use("/", async (req, res) => {
     const response = await axios({
       method: req.method, // Get method type (GET, POST, etc.)
       url: targetUrl,
-      headers: req.headers,
+      headers: {
+        ...req.headers,
+        "x-real-ip": "138.68.93.106",
+        "x-forwarded-for": "138.68.93.106",
+      },
       data: req.body, // Forward body if there's one
       params: req.query, // Forward query params if there's any
     });
