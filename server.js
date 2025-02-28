@@ -2,13 +2,14 @@ const express = require("express");
 const axios = require("axios");
 const CircularJSON = require("circular-json");
 const https = require("https");
+const http2 = require('http2-wrapper');
 
 const app = express();
 const PORT = 3000; // You can change the port as needed
 
 app.use(express.json()); // To parse incoming JSON requests
 
-const agent = new https.Agent({
+const agent = new http2.Agent({
   rejectUnauthorized: false, // Disables hostname verification
 });
 
@@ -22,14 +23,17 @@ app.use("/", async (req, res) => {
     const response = await axios({
       method: req.method, // Get method type (GET, POST, etc.)
       url: targetUrl,
-      headers: req.headers,
-      httpAgent: agent,
+      headers: {
+        ...req.headers,
+        "User-Agent": "curl/8.5.0",
+        Accept: "application/json",
+      },
       httpsAgent: agent,
       data: req.body, // Forward body if there's one
       params: req.query, // Forward query params if there's any
     });
 
-    console.log("response.data emre", CircularJSON.stringify(response));
+    // console.log("response.data emre", CircularJSON.stringify(response));
     console.log("response.data emre", CircularJSON.stringify(response.data));
 
     // Send back the response from the target application
