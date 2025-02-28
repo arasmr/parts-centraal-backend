@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const CircularJSON = require("circular-json");
 const https = require("https");
-const http2 = require('http2-wrapper');
+const http2 = require("http2-wrapper");
 
 const app = express();
 const PORT = 3000; // You can change the port as needed
@@ -19,9 +19,20 @@ app.use("/", async (req, res) => {
   try {
     const targetUrl = "https://partscentraalws.aldoc.eu:443" + req.originalUrl; // Change to your target app URL
 
+    console.log("Forwarded request headers:", {
+      ...req.headers,
+      "User-Agent": "curl/8.5.0",
+      Accept: "application/json",
+    });
+
+    console.log("Request body:", req.body);
+    console.log("Request query:", req.query);
+
+    console.log("Target URL:", targetUrl);
+
     // Forward the request using axios
-    const response = await axios({
-      method: req.method, // Get method type (GET, POST, etc.)
+    const axiosConfig = {
+      method: req.method,
       url: targetUrl,
       headers: {
         ...req.headers,
@@ -31,7 +42,12 @@ app.use("/", async (req, res) => {
       httpsAgent: agent,
       data: req.body, // Forward body if there's one
       params: req.query, // Forward query params if there's any
-    });
+    };
+
+    // Log the config being used for the request
+    console.log("Axios config:", axiosConfig);
+
+    const response = await axios(axiosConfig);
 
     // console.log("response.data emre", CircularJSON.stringify(response));
     console.log("response.data emre", CircularJSON.stringify(response.data));
