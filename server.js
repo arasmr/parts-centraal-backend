@@ -9,6 +9,7 @@ app.use(express.json()); // To parse incoming JSON requests
 
 // Proxy route that forwards the incoming request
 app.use("/", async (req, res) => {
+  console.log("emre", req.headers);
   try {
     const targetUrl = "https://partscentraalws.aldoc.eu:443" + req.originalUrl; // Change to your target app URL
 
