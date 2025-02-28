@@ -13,62 +13,83 @@ const agent = new https.Agent({
 });
 
 // Proxy route that forwards the incoming request
+// app.use("/", async (req, res) => {
+//   console.log("emre", req.headers);
+//   try {
+//     const targetUrl = "https://partscentraalws.aldoc.eu:443" + req.originalUrl; // Change to your target app URL
+
+//     console.log("Forwarded request headers:", {
+//       ...req.headers,
+//       "User-Agent": "curl/8.5.0",
+//       Accept: "application/json",
+//     });
+
+//     console.log("Request body:", req.body);
+//     console.log("Request query:", req.query);
+
+//     console.log("Target URL:", targetUrl);
+
+//     // Forward the request using axios
+//     const axiosConfig = {
+//       method: req.method,
+//       url: targetUrl,
+//       headers: {
+//         ...req.headers,
+//         "User-Agent": "curl/8.5.0",
+//         Accept: "application/json",
+//       },
+//       httpsAgent: agent,
+//       data: req.body, // Forward body if there's one
+//       params: req.query, // Forward query params if there's any
+//     };
+
+//     // Log the config being used for the request
+//     console.log("Axios config:", axiosConfig);
+
+//     const response = await axios(axiosConfig);
+
+//     console.log("Response status:", response.status);
+
+//     console.log("Full response:", response);
+
+//     // console.log("response.data emre", CircularJSON.stringify(response));
+//     console.log("response.data emre", CircularJSON.stringify(response.data));
+
+//     // Send back the response from the target application
+//     res.status(response.status).send(response.data);
+//   } catch (error) {
+//     if (error.response) {
+//       console.log("Error response:", error.response);
+//     }
+//     console.log("error in catch block", error);
+//     // Handle errors and send an appropriate response
+//     if (error.response) {
+//       res.status(error.response.status).send(error.response.data);
+//     } else {
+//       res.status(500).send("Error occurred while forwarding the request");
+//     }
+//   }
+// });
+
 app.use("/", async (req, res) => {
-  console.log("emre", req.headers);
-  try {
-    const targetUrl = "https://partscentraalws.aldoc.eu:443" + req.originalUrl; // Change to your target app URL
-
-    console.log("Forwarded request headers:", {
-      ...req.headers,
-      "User-Agent": "curl/8.5.0",
-      Accept: "application/json",
-    });
-
-    console.log("Request body:", req.body);
-    console.log("Request query:", req.query);
-
-    console.log("Target URL:", targetUrl);
-
-    // Forward the request using axios
-    const axiosConfig = {
-      method: req.method,
-      url: targetUrl,
+  axios
+    .get("https://partscentraalws.aldoc.eu/PartServices/api/v2/Parts/6/52912", {
       headers: {
-        ...req.headers,
-        "User-Agent": "curl/8.5.0",
+        "X-Real-IP": "84.241.192.28",
+        "X-Forwarded-For": "84.241.192.28",
         Accept: "application/json",
+        "User-Agent": "curl/8.5.0",
       },
-      httpsAgent: agent,
-      data: req.body, // Forward body if there's one
-      params: req.query, // Forward query params if there's any
-    };
-
-    // Log the config being used for the request
-    console.log("Axios config:", axiosConfig);
-
-    const response = await axios(axiosConfig);
-
-    console.log("Response status:", response.status);
-
-    console.log("Full response:", response);
-
-    // console.log("response.data emre", CircularJSON.stringify(response));
-    console.log("response.data emre", CircularJSON.stringify(response.data));
-
-    // Send back the response from the target application
-    res.status(response.status).send(response.data);
-  } catch (error) {
-    if (error.response) {
-      console.log("Error response:", error.response);
-    }
-    console.log("error in catch block", error);
-    // Handle errors and send an appropriate response
-    if (error.response) {
-      res.status(error.response.status).send(error.response.data);
-    } else {
-      res.status(500).send("Error occurred while forwarding the request");
-    }
-  }
+    })
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
+    });
 });
 
 // Start the server
