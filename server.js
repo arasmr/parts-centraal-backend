@@ -46,8 +46,11 @@ app.use("/", async (req, res) => {
 
     // Log the config being used for the request
     console.log("Axios config:", axiosConfig);
+    console.log("Response status:", response.status);
 
     const response = await axios(axiosConfig);
+
+    console.log("Full response:", response);
 
     // console.log("response.data emre", CircularJSON.stringify(response));
     console.log("response.data emre", CircularJSON.stringify(response.data));
@@ -55,6 +58,9 @@ app.use("/", async (req, res) => {
     // Send back the response from the target application
     res.status(response.status).send(response.data);
   } catch (error) {
+    if (error.response) {
+      console.log("Error response:", error.response);
+    }
     console.log("error in catch block", CircularJSON.stringify(error));
     // Handle errors and send an appropriate response
     if (error.response) {
