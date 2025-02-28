@@ -23,13 +23,14 @@ app.use("/", async (req, res) => {
       method: req.method, // Get method type (GET, POST, etc.)
       url: targetUrl,
       headers: req.headers,
+      httpAgent: agent,
       httpsAgent: agent,
       data: req.body, // Forward body if there's one
       params: req.query, // Forward query params if there's any
     });
 
-    console.log("response.data emre", CircularJSON.stringify(response.data));
     console.log("response.data emre", CircularJSON.stringify(response));
+    console.log("response.data emre", CircularJSON.stringify(response.data));
 
     // Send back the response from the target application
     res.status(response.status).send(response.data);
