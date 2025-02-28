@@ -2,14 +2,13 @@ const express = require("express");
 const axios = require("axios");
 const CircularJSON = require("circular-json");
 const https = require("https");
-const http2 = require("http2-wrapper");
 
 const app = express();
 const PORT = 3000; // You can change the port as needed
 
 app.use(express.json()); // To parse incoming JSON requests
 
-const agent = new http2.Agent({
+const agent = new https.Agent({
   rejectUnauthorized: false, // Disables hostname verification
 });
 
