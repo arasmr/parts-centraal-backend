@@ -1,11 +1,16 @@
 const express = require("express");
 const axios = require("axios");
 const CircularJSON = require("circular-json");
+const https = require("https");
 
 const app = express();
 const PORT = 3000; // You can change the port as needed
 
 app.use(express.json()); // To parse incoming JSON requests
+
+const agent = new https.Agent({
+  rejectUnauthorized: false, // Disables hostname verification
+});
 
 // Proxy route that forwards the incoming request
 app.use("/", async (req, res) => {
@@ -22,6 +27,7 @@ app.use("/", async (req, res) => {
         "x-real-ip": "138.68.93.106",
         "x-forwarded-for": "138.68.93.106",
       },
+      httpsAgent: agent,
       data: req.body, // Forward body if there's one
       params: req.query, // Forward query params if there's any
     });
