@@ -60,7 +60,7 @@ app.use("/", async (req, res) => {
     if (error.response) {
       console.log("Error response:", error.response);
     }
-    console.log("error in catch block", CircularJSON.stringify(error));
+    console.log("error in catch block", error);
     // Handle errors and send an appropriate response
     if (error.response) {
       res.status(error.response.status).send(error.response.data);
