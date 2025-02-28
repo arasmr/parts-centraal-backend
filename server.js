@@ -45,9 +45,10 @@ app.use("/", async (req, res) => {
 
     // Log the config being used for the request
     console.log("Axios config:", axiosConfig);
-    console.log("Response status:", response.status);
 
     const response = await axios(axiosConfig);
+
+    console.log("Response status:", response.status);
 
     console.log("Full response:", response);
 
