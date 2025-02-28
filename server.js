@@ -1,5 +1,6 @@
 const express = require("express");
 const axios = require("axios");
+const CircularJSON = require("circular-json");
 
 const app = express();
 const PORT = 3000; // You can change the port as needed
@@ -20,14 +21,13 @@ app.use("/", async (req, res) => {
       params: req.query, // Forward query params if there's any
     });
 
-    console.log("This is my response", response);
-    console.log("response.data", response.data);
-    console.log(JSON.stringify(response));
+    console.log("response.data emre", CircularJSON.stringify(response.data));
+    console.log("response.data emre", CircularJSON.stringify(response));
 
     // Send back the response from the target application
     res.status(response.status).send(response.data);
   } catch (error) {
-    console.log("error in catch block", error);
+    console.log("error in catch block", CircularJSON.stringify(error));
     // Handle errors and send an appropriate response
     if (error.response) {
       res.status(error.response.status).send(error.response.data);
