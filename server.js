@@ -72,8 +72,10 @@ const agent = new https.Agent({
 // });
 
 app.use("/", async (req, res) => {
+  const targetUrl = "https://partscentraalws.aldoc.eu:443" + req.originalUrl; // Change to your target app URL
+
   axios
-    .get("https://partscentraalws.aldoc.eu/PartServices/api/v2/Parts/6/52912", {
+    .get(targetUrl, {
       headers: {
         "X-Real-IP": "84.241.192.28",
         "X-Forwarded-For": "84.241.192.28",
@@ -83,12 +85,14 @@ app.use("/", async (req, res) => {
     })
     .then((response) => {
       console.log(response.data);
+      res.status(response.status).send(response.data);
     })
     .catch((error) => {
       console.log(
         "Error:",
         error.response ? error.response.data : error.message
       );
+      res.status(error.response.status).send(error.response.data);
     });
 });
 
