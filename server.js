@@ -1,10 +1,12 @@
 const express = require("express");
 const axios = require("axios");
+const cors = require('cors');
 require("dotenv").config();
 
 const app = express();
 const PORT = 3000; // You can change the port as needed
 
+app.use(cors());
 app.use(express.json()); // To parse incoming JSON requests
 
 // Replace with your actual API key and secret
