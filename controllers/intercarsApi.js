@@ -92,6 +92,36 @@ async function oauthToken(req, res) {
   }
 }
 
+/**
+ * GET /invoice/detail?id=LAZ/19/0001&techId=true
+ * Invoice IDs often contain slashes; query param avoids nginx/Express path 404s.
+ */
+async function invoiceById(req, res) {
+  try {
+    const id = req.query.id;
+    if (!id || !String(id).trim()) {
+      return res.status(400).json({
+        error: "Query parameter id is required (InterCars invoice id)",
+      });
+    }
+
+    const params = {};
+    if (req.query.techId === "true" || req.query.techId === "1") {
+      params.techId = "true";
+    }
+
+    const encoded = encodeURIComponent(String(id).trim());
+    const icResponse = await icRequest({
+      method: "get",
+      path: `/invoice/${encoded}`,
+      params,
+    });
+    return forwardStatus(res, icResponse);
+  } catch (error) {
+    return sendIntercarsError(res, error, "invoiceById");
+  }
+}
+
 /** GET /oauth/token/status — cached token probe (no secret in response) */
 async function oauthTokenStatus(req, res) {
   try {
@@ -115,6 +145,7 @@ module.exports = {
   pricingQuote,
   inventoryStockGet,
   inventoryStockPost,
+  invoiceById,
   oauthToken,
   oauthTokenStatus,
 };

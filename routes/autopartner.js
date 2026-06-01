@@ -35,5 +35,25 @@ router.post("/InsertOrderTecDoc", async (req, res) => {
   return forwardApResponse(res, apRes);
 });
 
+router.post("/Invoices", async (req, res) => {
+  const apRes = await apPost("Invoices", req.body);
+  return forwardApResponse(res, apRes);
+});
+
+router.post("/DeliveryDocuments", async (req, res) => {
+  const apRes = await apPost("DeliveryDocuments", req.body);
+  return forwardApResponse(res, apRes);
+});
+
+router.post("/DeliveryDocumentPositions", async (req, res) => {
+  const apRes = await apPost("DeliveryDocumentPositions", req.body);
+  return forwardApResponse(res, apRes);
+});
+
+router.post("/InvoicePositions", async (req, res) => {
+  const apRes = await apPost("InvoicePositions", req.body);
+  return forwardApResponse(res, apRes);
+});
+
 module.exports = router;
 

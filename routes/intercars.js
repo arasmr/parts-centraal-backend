@@ -30,6 +30,7 @@ router.get("/delivery/:id", createIcProxy("GET", (req) => `/delivery/${req.param
 
 // --- Invoice ---
 router.get("/invoice", createIcProxy("GET", "/invoice"));
+router.get("/invoice/detail", api.invoiceById);
 router.get("/invoice/:id", createIcProxy("GET", (req) => `/invoice/${req.params.id}`));
 
 // --- Sales ---
