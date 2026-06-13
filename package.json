@@ -18,7 +18,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "node --test lib/autodocScrape.test.js lib/intercarsPricing.test.js lib/orderMetadata.test.js"
+    "test": "node --test lib/autodocScrape.test.js lib/intercarsPricing.test.js lib/orderMetadata.test.js lib/autopartnerProductCode.test.js"
   },
   "author": "Parts Centraal",
   "license": "ISC"
