@@ -4,6 +4,7 @@
  */
 const express = require("express");
 const { createIcProxy } = require("../lib/intercarsClient");
+const { applyIntercarsOrderMetadata } = require("../lib/orderMetadata");
 const api = require("../controllers/intercarsApi");
 
 const router = express.Router();
@@ -34,7 +35,12 @@ router.get("/invoice/detail", api.invoiceById);
 router.get("/invoice/:id", createIcProxy("GET", (req) => `/invoice/${req.params.id}`));
 
 // --- Sales ---
-router.post("/sales/requisition", createIcProxy("POST", "/sales/requisition"));
+router.post(
+  "/sales/requisition",
+  createIcProxy("POST", "/sales/requisition", {
+    normalizeBody: applyIntercarsOrderMetadata,
+  }),
+);
 router.get(
   "/sales/requisition",
   createIcProxy("GET", "/sales/requisition"),

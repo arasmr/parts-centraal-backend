@@ -8,6 +8,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "redis": "^5.0.0",
+    "swagger-ui-express": "^5.0.1",
     "unzipper": "^0.12.3"
   },
   "name": "parts-centraal-backend",
@@ -17,7 +18,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "node --test lib/autodocScrape.test.js lib/intercarsPricing.test.js"
+    "test": "node --test lib/autodocScrape.test.js lib/intercarsPricing.test.js lib/orderMetadata.test.js"
   },
   "author": "Parts Centraal",
   "license": "ISC"

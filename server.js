@@ -3,15 +3,34 @@ require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
 const { scrapeAutodocListing } = require("./lib/autodocScrape");
+const { buildOpenApiSpec } = require("./lib/openapi");
 const servicesRouter = require("./routes/services");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const openApiSpec = buildOpenApiSpec();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+/** OpenAPI / Swagger UI (no API key required) */
+app.get("/docs/openapi.json", (_req, res) => {
+  res.json(openApiSpec);
+});
+app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(openApiSpec, {
+    customSiteTitle: "Parts Centraal API Docs",
+    swaggerOptions: {
+      persistAuthorization: true,
+      displayRequestDuration: true,
+    },
+  }),
+);
 
 const VALID_API_KEY = process.env.API_KEY;
 const VALID_API_SECRET = process.env.API_SECRET;
@@ -112,4 +131,5 @@ app.use("/", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Parts Centraal backend listening on ${PORT}`);
+  console.log(`API docs: http://localhost:${PORT}/docs`);
 });

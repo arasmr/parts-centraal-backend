@@ -1,0 +1,1898 @@
+{
+  "info": {
+    "_postman_id": "b97f235c-93e1-4d92-bd8e-eba712151b14",
+    "name": "InterParts Falcon5 WebService",
+    "description": "InterParts Falcon5 WebService v1.20 via parts-centraal-backend proxy.\n\nAuth:\n- Backend: x-api-key + x-api-secret headers\n- InterParts: MD5 password login (doLogin). Server caches sessionId in Redis; you can omit sessionId in request bodies.\n\nSet interpartsPasswordMd5 to the MD5 hex hash of your password, or configure INTERPARTS_USER_PASSWORD_MD5 in .env.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "apiKey",
+      "value": ""
+    },
+    {
+      "key": "apiSecret",
+      "value": ""
+    },
+    {
+      "key": "interpartsLogin",
+      "value": ""
+    },
+    {
+      "key": "interpartsPasswordMd5",
+      "value": ""
+    },
+    {
+      "key": "sessionId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "General",
+      "item": [
+        {
+          "name": "getVersion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getVersion",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getVersion"
+              ]
+            },
+            "description": "Get Falcon5 system version. No session required."
+          },
+          "response": []
+        },
+        {
+          "name": "doLogin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userLogin\": \"{{interpartsLogin}}\",\n  \"userPassword\": \"{{interpartsPasswordMd5}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doLogin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doLogin"
+              ]
+            },
+            "description": "Login \u2014 saves sessionId to collection variable."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "const sid = data?.doLoginResponse?.sessionId;",
+                  "if (sid) { pm.collectionVariables.set('sessionId', sid); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "getMyCustomerInfo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getMyCustomerInfo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getMyCustomerInfo"
+              ]
+            },
+            "description": "Customer profile, warehouses, credit limit, etc."
+          },
+          "response": []
+        },
+        {
+          "name": "getMyBonuses",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"getGroupPromoList\": \"1\",\n  \"getProductPromoList\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getMyBonuses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getMyBonuses"
+              ]
+            },
+            "description": "Promotions and bonuses."
+          },
+          "response": []
+        },
+        {
+          "name": "doSetRodoStatus",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newStatus\": 1,\n  \"clientIP\": \"127.0.0.1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doSetRodoStatus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doSetRodoStatus"
+              ]
+            },
+            "description": "Toggle GDPR/personal data processing consent."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "getProductsInfo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productList\": {\n    \"product\": [\n      {\n        \"reference\": \"0-001-231-030\"\n      }\n    ]\n  },\n  \"showExternalStockInfo\": \"2\",\n  \"showPhotos\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getProductsInfo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getProductsInfo"
+              ]
+            },
+            "description": "Product info, stock and prices (max 50 products)."
+          },
+          "response": []
+        },
+        {
+          "name": "getProductFileUrl",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fileId\": \"00000013\",\n  \"productId\": \"0003B4\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getProductFileUrl",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getProductFileUrl"
+              ]
+            },
+            "description": "Get download URL for product file."
+          },
+          "response": []
+        },
+        {
+          "name": "getProductStockChanges",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"warehouseId\": \"01\",\n  \"fromDt\": \"2021-09-01 16:17:25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getProductStockChanges",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getProductStockChanges"
+              ]
+            },
+            "description": "Paged product stock changes."
+          },
+          "response": []
+        },
+        {
+          "name": "doSearchProducts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"searchString\": \"96575\",\n  \"searchMode\": {\n    \"modeName\": [\n      \"name\",\n      \"reference\"\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doSearchProducts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doSearchProducts"
+              ]
+            },
+            "description": "Search products by name/reference."
+          },
+          "response": []
+        },
+        {
+          "name": "getReplacements",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product\": {\n    \"reference\": \"0-001-231-030\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getReplacements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getReplacements"
+              ]
+            },
+            "description": "Product replacements."
+          },
+          "response": []
+        },
+        {
+          "name": "doBuyNow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"warehouseId\": \"01\",\n  \"productList\": {\n    \"product\": [\n      {\n        \"id\": \"0003B4\",\n        \"quantity\": \"1\"\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doBuyNow",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doBuyNow"
+              ]
+            },
+            "description": "Buy Now via goods issue note."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Complaints",
+      "item": [
+        {
+          "name": "doCreateComplaint",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": \"\",\n  \"itemId\": \"\",\n  \"quantity\": \"1\",\n  \"description\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doCreateComplaint",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doCreateComplaint"
+              ]
+            },
+            "description": "Create a complaint."
+          },
+          "response": []
+        },
+        {
+          "name": "getMyComplaints",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getMyComplaints",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getMyComplaints"
+              ]
+            },
+            "description": "List complaints."
+          },
+          "response": []
+        },
+        {
+          "name": "getComplaintQuantityAvailable",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": \"\",\n  \"itemId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getComplaintQuantityAvailable",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getComplaintQuantityAvailable"
+              ]
+            },
+            "description": "Complaint quantity available."
+          },
+          "response": []
+        },
+        {
+          "name": "getInvoicesComplaintProduct",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"\",\n  \"dateFrom\": \"2024-01-01\",\n  \"dateTo\": \"2024-12-31\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getInvoicesComplaintProduct",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getInvoicesComplaintProduct"
+              ]
+            },
+            "description": "Sales documents for product in complaint date range."
+          },
+          "response": []
+        },
+        {
+          "name": "doComplaintPrint",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"complaintId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doComplaintPrint",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doComplaintPrint"
+              ]
+            },
+            "description": "PDF printout of complaint."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reservations",
+      "item": [
+        {
+          "name": "doOrderProducts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productList\": {\n    \"product\": [\n      {\n        \"id\": \"0003B4\",\n        \"quantity\": \"1\",\n        \"warehouseId\": \"01\"\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doOrderProducts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doOrderProducts"
+              ]
+            },
+            "description": "Create/reserve order."
+          },
+          "response": []
+        },
+        {
+          "name": "getMyOrders",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"getItems\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getMyOrders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getMyOrders"
+              ]
+            },
+            "description": "List orders with optional items."
+          },
+          "response": []
+        },
+        {
+          "name": "getOrderStockInfo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"01512768\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getOrderStockInfo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getOrderStockInfo"
+              ]
+            },
+            "description": "Order item availability."
+          },
+          "response": []
+        },
+        {
+          "name": "doOrderClose",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"01520531\",\n  \"collectionInPerson\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doOrderClose",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doOrderClose"
+              ]
+            },
+            "description": "Close/confirm order."
+          },
+          "response": []
+        },
+        {
+          "name": "doOrderItemDelete",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"01520531\",\n  \"itemId\": \"R-3975485\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doOrderItemDelete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doOrderItemDelete"
+              ]
+            },
+            "description": "Delete order line."
+          },
+          "response": []
+        },
+        {
+          "name": "doOrderItemEdit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"01520531\",\n  \"itemId\": \"R-3975485\",\n  \"itemInfo\": {\n    \"quantity\": \"2\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doOrderItemEdit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doOrderItemEdit"
+              ]
+            },
+            "description": "Edit order line."
+          },
+          "response": []
+        },
+        {
+          "name": "doOrderEdit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"01520531\",\n  \"orderInfo\": {\n    \"comment\": \"comment\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doOrderEdit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doOrderEdit"
+              ]
+            },
+            "description": "Edit order parameters."
+          },
+          "response": []
+        },
+        {
+          "name": "doOrderDelete",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"01520531\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doOrderDelete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doOrderDelete"
+              ]
+            },
+            "description": "Delete order."
+          },
+          "response": []
+        },
+        {
+          "name": "doOrderItemsMove",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sourceOrderId\": \"\",\n  \"destOrderId\": \"\",\n  \"itemIdList\": {\n    \"itemId\": []\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doOrderItemsMove",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doOrderItemsMove"
+              ]
+            },
+            "description": "Move items between orders."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "getMyInvoices",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getMyInvoices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getMyInvoices"
+              ]
+            },
+            "description": "List sale documents (invoices, WZ, etc.)."
+          },
+          "response": []
+        },
+        {
+          "name": "getEDocument",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documentId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getEDocument",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getEDocument"
+              ]
+            },
+            "description": "Digital document PDF."
+          },
+          "response": []
+        },
+        {
+          "name": "doDocumentPrint",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documentId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doDocumentPrint",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doDocumentPrint"
+              ]
+            },
+            "description": "PDF printout of document."
+          },
+          "response": []
+        },
+        {
+          "name": "doSetDeliveryConfirmation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documentId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doSetDeliveryConfirmation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doSetDeliveryConfirmation"
+              ]
+            },
+            "description": "Confirm receipt of delivery (WZ)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Routes",
+      "item": [
+        {
+          "name": "getMyRoutes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getMyRoutes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getMyRoutes"
+              ]
+            },
+            "description": "Available delivery routes."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Logistics",
+      "item": [
+        {
+          "name": "getMyPackages",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"getTrackingUrl\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getMyPackages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getMyPackages"
+              ]
+            },
+            "description": "List packages."
+          },
+          "response": []
+        },
+        {
+          "name": "doLogmCreatePackage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"packageId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doLogmCreatePackage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doLogmCreatePackage"
+              ]
+            },
+            "description": "Create package from another package."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "getMyPayments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getMyPayments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getMyPayments"
+              ]
+            },
+            "description": "List payments."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Returns",
+      "item": [
+        {
+          "name": "getMyReturns",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getMyReturns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getMyReturns"
+              ]
+            },
+            "description": "List returns."
+          },
+          "response": []
+        },
+        {
+          "name": "doReturnCreatePackage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"returnIdList\": {\n    \"returnId\": []\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doReturnCreatePackage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doReturnCreatePackage"
+              ]
+            },
+            "description": "Create return package number."
+          },
+          "response": []
+        },
+        {
+          "name": "doDeleteReturn",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"returnId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doDeleteReturn",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doDeleteReturn"
+              ]
+            },
+            "description": "Delete registered return."
+          },
+          "response": []
+        },
+        {
+          "name": "doEditReturn",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"returnId\": \"\",\n  \"returnInfo\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doEditReturn",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doEditReturn"
+              ]
+            },
+            "description": "Edit return."
+          },
+          "response": []
+        },
+        {
+          "name": "doCreateReturn",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productList\": {\n    \"product\": [\n      {\n        \"id\": \"\",\n        \"quantity\": \"1\"\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doCreateReturn",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doCreateReturn"
+              ]
+            },
+            "description": "Create new return."
+          },
+          "response": []
+        },
+        {
+          "name": "getReturnQuantityAvailable",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"\",\n  \"detailedQuantity\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getReturnQuantityAvailable",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getReturnQuantityAvailable"
+              ]
+            },
+            "description": "Return quantity available."
+          },
+          "response": []
+        },
+        {
+          "name": "getReturnNowProductInfo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"warehouseId\": \"01\",\n  \"product\": {\n    \"id\": \"0003AZ\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/getReturnNowProductInfo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "getReturnNowProductInfo"
+              ]
+            },
+            "description": "Quick return product info."
+          },
+          "response": []
+        },
+        {
+          "name": "doReturnClearPackage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"packageId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doReturnClearPackage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doReturnClearPackage"
+              ]
+            },
+            "description": "Clear package from return list."
+          },
+          "response": []
+        },
+        {
+          "name": "doReturnGetPackageLabel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"packageId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doReturnGetPackageLabel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doReturnGetPackageLabel"
+              ]
+            },
+            "description": "Return package label."
+          },
+          "response": []
+        },
+        {
+          "name": "doReturnSendPackage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"packageId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doReturnSendPackage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doReturnSendPackage"
+              ]
+            },
+            "description": "Mark return package as sent."
+          },
+          "response": []
+        },
+        {
+          "name": "doReturnNow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "x-api-secret",
+                "value": "{{apiSecret}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"warehouseId\": \"01\",\n  \"productList\": {\n    \"product\": [\n      {\n        \"id\": \"0003AZ\",\n        \"quantity\": \"1\"\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interparts/doReturnNow",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "interparts",
+                "doReturnNow"
+              ]
+            },
+            "description": "Quick return."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
