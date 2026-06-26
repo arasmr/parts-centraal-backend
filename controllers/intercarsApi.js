@@ -7,6 +7,12 @@ const {
   buildPricingQuoteBodyFromRequest,
   sendIntercarsError,
 } = require("../lib/intercarsPricing");
+const {
+  resolveTowKodsByReference,
+} = require("../lib/intercarsReferenceIndex");
+const {
+  resolveProductInfoByTowKod,
+} = require("../lib/intercarsProductInfo");
 
 /** POST /inventory/quote — availability + price per warehouse */
 async function inventoryQuote(req, res) {
@@ -122,6 +128,94 @@ async function invoiceById(req, res) {
   }
 }
 
+/**
+ * GET /sku-by-reference?reference=ADH22118
+ * Resolves InterCars tow_kod(s) for a manufacturer / TecDoc reference using the
+ * bundled ProductInformation index. tow_kod is the SKU used by pricing/inventory.
+ */
+function skuByReference(req, res) {
+  const reference = req.query.reference;
+  if (!reference || !String(reference).trim()) {
+    return res.status(400).json({
+      data: {
+        success: false,
+        error: "MISSING_REFERENCE",
+        message: "Query parameter ?reference= is required",
+      },
+    });
+  }
+
+  try {
+    const towKods = resolveTowKodsByReference(reference);
+    return res.json({
+      data: {
+        success: true,
+        reference: String(reference).trim(),
+        towKods,
+        matches: towKods.map((towKod) => ({ towKod })),
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      data: {
+        success: false,
+        error: "INDEX_ERROR",
+        message: error.message || "Failed to read InterCars reference index",
+      },
+    });
+  }
+}
+
+/**
+ * GET /product-info?sku=BADE08[,F61F56]
+ * Returns brand / name / reference for one or more tow_kod(s) from the bundled
+ * ProductInformation index. The IC live API does not expose the brand, so this
+ * enriches a SKU lookup with the manufacturer + description.
+ */
+function productInfoBySku(req, res) {
+  const raw = req.query.sku;
+  if (!raw || !String(raw).trim()) {
+    return res.status(400).json({
+      data: {
+        success: false,
+        error: "MISSING_SKU",
+        message: "Query parameter ?sku= is required",
+      },
+    });
+  }
+
+  const skus = String(raw)
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  try {
+    const items = skus.map((sku) => {
+      const info = resolveProductInfoByTowKod(sku);
+      return {
+        sku,
+        brand: info?.brand || null,
+        name: info?.name || null,
+        reference: info?.reference || null,
+      };
+    });
+    return res.json({
+      data: {
+        success: true,
+        items,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      data: {
+        success: false,
+        error: "INDEX_ERROR",
+        message: error.message || "Failed to read InterCars product info index",
+      },
+    });
+  }
+}
+
 /** GET /oauth/token/status — cached token probe (no secret in response) */
 async function oauthTokenStatus(req, res) {
   try {
@@ -148,4 +242,6 @@ module.exports = {
   invoiceById,
   oauthToken,
   oauthTokenStatus,
+  skuByReference,
+  productInfoBySku,
 };

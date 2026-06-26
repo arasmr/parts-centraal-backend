@@ -22,6 +22,11 @@ router.post("/inventory/quote", api.inventoryQuote);
 router.get("/inventory/stock", api.inventoryStockGet);
 router.post("/inventory/stock", api.inventoryStockPost);
 
+// --- Catalog: resolve InterCars tow_kod (SKU) from a manufacturer reference ---
+router.get("/sku-by-reference", api.skuByReference);
+// --- Catalog: brand / name / reference for a tow_kod (SKU) ---
+router.get("/product-info", api.productInfoBySku);
+
 // --- Pricing ---
 router.post("/pricing/quote", api.pricingQuote);
 
